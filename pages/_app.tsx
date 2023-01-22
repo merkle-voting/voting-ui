@@ -7,7 +7,8 @@ import { createGlobalStyle, DefaultTheme, ThemeProvider } from 'styled-component
 const sora = Sora({ subsets: ['latin'] });
 const theme: DefaultTheme = {
     colors: {
-        bg: '#ffffff',
+        white: '#ffffff',
+        gray: '#f7f8fb',
         black: '#000000',
         green: '#00a45c',
         lightGreen: '#a3f26f',
@@ -45,7 +46,7 @@ html, body {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  background-color: ${theme.colors.bg};
+  background-color: ${theme.colors.white};
 }
 /*
   6. Improve media defaults
