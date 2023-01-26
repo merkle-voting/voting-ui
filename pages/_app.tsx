@@ -1,3 +1,6 @@
+import 'styles/TimeRangePicker.css';
+import 'styles/Clock.css';
+
 import { Sora } from '@next/font/google';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';

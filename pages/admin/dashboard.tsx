@@ -12,6 +12,7 @@ const PageWrapper = styled.div`
 
 const ContentContainer = styled(Container)`
     margin-top: 4rem;
+    padding: 0;
 `;
 
 const CardGrid = styled.div`
@@ -19,6 +20,7 @@ const CardGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
+    max-height: 80vh;
 `;
 
 const Dashboard = () => {
