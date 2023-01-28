@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { StaticImageData } from 'next/image';
+import { useRouter } from 'next/router';
 import styled, { useTheme } from 'styled-components';
 
 import dottedMap from '../assets/dotted-nigeria-map.png';
@@ -11,6 +12,7 @@ import Flex from '../components/styled/Flex';
 interface WrapperProps {
     image: StaticImageData;
 }
+
 const SizedContainer = styled(Container)`
     height: 40rem;
 `;
@@ -55,6 +57,7 @@ const ButtonWithNegativeMargin = styled(Button)`
 
 const Home = () => {
     const theme = useTheme();
+    const router = useRouter();
     return (
         <>
             <Head>
@@ -85,6 +88,7 @@ const Home = () => {
                             display="inline"
                             padding="1rem 4rem"
                             fontSize="1.2rem"
+                            onClick={() => router.push('/elections')}
                         >
                             Enter DApp
                         </ButtonWithNegativeMargin>

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import ElectionCard from '../../components/ElectionCard';
 import Header from '../../components/Header';
 import AdminLayout from '../../components/layouts/adminLayout';
+import { CardGrid } from '../../components/styled/CardGrid';
 import Container from '../../components/styled/Container';
 
 const PageWrapper = styled.div`
@@ -13,14 +14,6 @@ const PageWrapper = styled.div`
 const ContentContainer = styled(Container)`
     margin-top: 4rem;
     padding: 0;
-`;
-
-const CardGrid = styled.div`
-    overflow-y: scroll;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
-    max-height: 80vh;
 `;
 
 const Dashboard = () => {
@@ -37,30 +30,6 @@ const Dashboard = () => {
                 <main>
                     <ContentContainer>
                         <CardGrid>
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
                             <ElectionCard />
                             <ElectionCard />
                             <ElectionCard />

@@ -11,7 +11,7 @@ const OthersCircle = styled.div<{ offset: number }>`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30px;
+    width: 35px;
     height: 30px;
     border-radius: 50%;
     background-color: ${(props) => props.theme.colors.lightGreen};
@@ -40,12 +40,12 @@ const Voters = () => {
     return (
         <>
             <VotersWrapper>
-                {votersAccount.slice(0, 6).map((account, index) => (
+                {votersAccount.slice(0, 4).map((account, index) => (
                     <Identicon key={index} account={account} offset={index * 10} />
                 ))}
             </VotersWrapper>
-            {votersAccount.length > 6 && (
-                <OthersCircle offset={7 * 10}>
+            {votersAccount.length > 4 && (
+                <OthersCircle offset={5 * 10}>
                     <span>{`+ ${votersAccount.length - 6}`}</span>
                 </OthersCircle>
             )}

@@ -23,6 +23,7 @@ const CardWrapper = styled.div`
 const StyledArrow = styled(ArrowRightShort)`
     width: 1.5rem;
     height: 1.2rem;
+    color: ${(props) => props.theme.colors.green};
 `;
 
 const VoteCount = styled.span`
@@ -32,10 +33,6 @@ const VoteCount = styled.span`
 const CardTitle = styled.h2`
     font-size: 1rem;
     font-weight: 700;
-`;
-
-const FlexStyled = styled(Flex)`
-    align-items: bottom;
 `;
 
 const CountDown = styled.span`
@@ -52,10 +49,10 @@ const ElectionCard = () => {
                 <StyledArrow />
             </Flex>
             <CardTitle>Nigeria general election</CardTitle>
-            <FlexStyled>
+            <Flex alignItems="flex-end">
                 <DynamicVoter />
                 <CountDown>Ends in 00:02:32</CountDown>
-            </FlexStyled>
+            </Flex>
         </CardWrapper>
     );
 };
