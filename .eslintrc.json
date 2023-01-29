@@ -57,18 +57,6 @@
         "@typescript-eslint/explicit-module-boundary-types": "off", // take this off here
         "@typescript-eslint/no-empty-function": "off", // take this off here
         "object-shorthand": ["error", "always"],
-        "no-case-declarations": "off",
-        "@typescript-eslint/no-restricted-imports": [
-            "error",
-            {
-                "paths": [
-                    {
-                        "name": "@ethersproject/providers",
-                        "message": "Please only use Providers instantiated in constants/providers to improve traceability.",
-                        "allowTypeImports": true
-                    }
-                ]
-            }
-        ]
+        "no-case-declarations": "off"
     }
 }

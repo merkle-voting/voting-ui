@@ -17,6 +17,7 @@ const PageTitle = styled.h1``;
 interface IHeader {
     adminPageTitle?: string;
 }
+
 const Header: React.FC<IHeader> = ({ adminPageTitle }) => {
     return (
         <SizedContainer>

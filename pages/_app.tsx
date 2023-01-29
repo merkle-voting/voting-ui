@@ -2,10 +2,20 @@ import 'styles/TimeRangePicker.css';
 import 'styles/Clock.css';
 
 import { Sora } from '@next/font/google';
+import { Web3ReactHooks, Web3ReactProvider } from '@web3-react/core';
+import { Connector } from '@web3-react/types';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { Fragment } from 'react';
 import { createGlobalStyle, DefaultTheme, ThemeProvider } from 'styled-components';
+
+import { web3Injected, web3network, web3NetworkHooks, webInjectedHooks } from '../connection';
+import useEagerlyConnect from '../hooks/useEagerlyConnect';
+
+const connectors: [Connector, Web3ReactHooks][] = [
+    [web3Injected, webInjectedHooks],
+    [web3network, web3NetworkHooks],
+];
 
 const sora = Sora({ subsets: ['latin'] });
 const theme: DefaultTheme = {
@@ -88,16 +98,19 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
+    useEagerlyConnect();
     // Use the layout defined at the page level, if available
     const Layout = Component.Layout || Fragment;
     return (
-        <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <div className={sora.className}>
-                <Layout>
-                    <Component {...pageProps} />
-                </Layout>
-            </div>
-        </ThemeProvider>
+        <Web3ReactProvider connectors={connectors}>
+            <ThemeProvider theme={theme}>
+                <GlobalStyle />
+                <div className={sora.className}>
+                    <Layout>
+                        <Component {...pageProps} />
+                    </Layout>
+                </div>
+            </ThemeProvider>
+        </Web3ReactProvider>
     );
 }
