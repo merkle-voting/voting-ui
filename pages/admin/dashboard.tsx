@@ -30,18 +30,18 @@ const Dashboard = () => {
                 <main>
                     <ContentContainer>
                         <CardGrid>
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
-                            <ElectionCard />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
+                            <ElectionCard isAdmin={true} />
                         </CardGrid>
                     </ContentContainer>
                 </main>

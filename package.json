@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@metamask/jazzicon": "^2.0.0",
+        "@ramonak/react-progress-bar": "^5.0.3",
         "@styled-icons/bootstrap": "^10.47.0",
         "@styled-icons/boxicons-solid": "^10.47.0",
         "@styled-icons/fluentui-system-regular": "^10.47.0",

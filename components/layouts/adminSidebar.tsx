@@ -1,6 +1,5 @@
 import { Dashboard } from '@styled-icons/boxicons-solid';
 import { NoteAdd } from '@styled-icons/fluentui-system-regular';
-import { LineChart } from '@styled-icons/remix-line';
 import { StyledIconBase } from '@styled-icons/styled-icon';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -86,12 +85,12 @@ const AdminSidebar = () => {
                         <span>Create Election</span>
                     </StyledLink>
                 </li>
-                <li>
+                {/* <li>
                     <StyledLink href="/admin/result" onClick={newPathName} pathname={pathName}>
                         <LineChart title="election result" />
                         <span>Election Results</span>
                     </StyledLink>
-                </li>
+                </li> */}
             </ul>
         </SideNav>
     );

@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import ProgressBar from '@ramonak/react-progress-bar';
+import styled, { useTheme } from 'styled-components';
 
 import Container from './styled/Container';
-
 const StatsContainer = styled(Container)`
     height: 8rem;
     padding: 1rem;
@@ -39,13 +39,19 @@ const Stat = styled.div`
 `;
 
 const ElectionStats = () => {
+    const { colors } = useTheme();
     return (
         <StatsContainer>
             <Title>Nigerian 2023 general election</Title>
             <StatsWrapper>
                 <Stat>
                     <span>status</span>
-                    <span></span>
+                    <ProgressBar
+                        completed={60}
+                        customLabel="In Progress 60%"
+                        bgColor={colors.green}
+                        margin="5px 0 0 0"
+                    />
                 </Stat>
                 <Stat>
                     <span>Total Candidate</span>

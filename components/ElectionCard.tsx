@@ -1,7 +1,10 @@
 import { ArrowRightShort } from '@styled-icons/bootstrap';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import { FC } from 'react';
 import styled from 'styled-components';
 
+import Button from './styled/Button';
 import Flex from './styled/Flex';
 
 const DynamicVoter = dynamic(() => import('./Voters'), {
@@ -41,17 +44,32 @@ const CountDown = styled.span`
     white-space: nowrap;
 `;
 
-const ElectionCard = () => {
+const ActivateButton = styled(Button)`
+    display: block;
+    margin-left: auto;
+    border-radius: 2rem;
+    background-color: ${({ theme }) => theme.colors.green};
+    padding: 0.3rem 1.5rem;
+`;
+
+const ElectionCard: FC<{ isAdmin?: boolean }> = ({ isAdmin }) => {
+    const router = useRouter();
     return (
-        <CardWrapper>
+        <CardWrapper onClick={() => !isAdmin && router.push('/election/1')}>
             <Flex justifyContent="space-between" alignItems="flex-start">
                 <VoteCount>7124 votes</VoteCount>
                 <StyledArrow />
             </Flex>
             <CardTitle>Nigeria general election</CardTitle>
             <Flex alignItems="flex-end">
-                <DynamicVoter />
-                <CountDown>Ends in 00:02:32</CountDown>
+                {isAdmin ? (
+                    <ActivateButton type="button">Activate</ActivateButton>
+                ) : (
+                    <>
+                        <DynamicVoter />
+                        <CountDown>Ends in 00:02:32</CountDown>
+                    </>
+                )}
             </Flex>
         </CardWrapper>
     );
