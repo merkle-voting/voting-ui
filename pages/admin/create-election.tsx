@@ -1,8 +1,11 @@
+import 'react-datetime/css/react-datetime.css';
+
 import { FiletypeCsv } from '@styled-icons/bootstrap';
-import TimeRangePicker from '@wojtekmaj/react-timerange-picker/dist/entry.nostyle';
 import { useStepper } from 'headless-stepper';
+import moment, { Moment } from 'moment';
 import Head from 'next/head';
-import { useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
+import Datetime from 'react-datetime';
 import styled from 'styled-components';
 import { useFilePicker } from 'use-file-picker';
 
@@ -69,15 +72,15 @@ const CreateElection = () => {
     const [duration, setDuration] = useState(['12:00', '01:00']);
     const steps = useMemo(() => [{ label: 'Step 1' }, { label: 'Step 2' }], []);
 
-    const { state: stepperState, nextStep, prevStep, progressProps, stepsProps, stepperProps } = useStepper({ steps });
+    const { state: stepperState, nextStep, prevStep, stepsProps, stepperProps } = useStepper({ steps });
 
     interface IState {
         electionTitle: string;
         numberOfCandidates: number;
         candidatesNamesById: { [id: number]: string };
-        votersCsv: any;
-        startTime: number | undefined;
-        endTime: number | undefined;
+        votersCsv: File | null | undefined;
+        startTime: Moment | undefined;
+        endTime: Moment | undefined;
     }
 
     enum ActionTypes {
@@ -115,25 +118,39 @@ const CreateElection = () => {
                 return state;
         }
     };
+    function addHours(date: Date, hours: number) {
+        date.setTime(date.getTime() + hours * 60 * 60 * 1000);
+
+        return date;
+    }
 
     const initialState: IState = {
         electionTitle: '',
         numberOfCandidates: 2,
         candidatesNamesById: {},
         votersCsv: null,
-        startTime: undefined,
-        endTime: undefined,
+        startTime: moment(addHours(new Date(), 1)),
+        endTime: moment(addHours(new Date(), 2)),
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
-    const [openFileSelector, { filesContent, loading }] = useFilePicker({
-        accept: '.csv',
+    const { electionTitle, numberOfCandidates, candidatesNamesById, votersCsv, startTime, endTime } = state;
+    const [openFileSelector, { filesContent, loading, errors, clear, plainFiles }] = useFilePicker({
+        accept: ['.xls', '.xlsx', '.xlsm', '.xltx', '.xltm'],
+        multiple: false,
     });
 
     const candidatesIdArray = useMemo(
         () => Array.from({ length: Number(state.numberOfCandidates) }, (_, i) => i),
         [state.numberOfCandidates]
     );
+
+    useEffect(() => {
+        dispatch({
+            type: ActionTypes.SET_VOTERS_CSV,
+            payload: { data: plainFiles[0] },
+        });
+    }, [ActionTypes.SET_VOTERS_CSV, plainFiles]);
 
     return (
         <>
@@ -159,23 +176,38 @@ const CreateElection = () => {
                                     <FormGroupWrapper>
                                         <CreateElectionTextInput
                                             label="Election title"
-                                            value=""
-                                            onUserInput={console.log}
+                                            value={electionTitle}
+                                            onUserInput={(value) =>
+                                                dispatch({
+                                                    type: ActionTypes.SET_ELECTION_TITLE,
+                                                    payload: { data: value },
+                                                })
+                                            }
                                         />
-                                        {/* <CreateElectionNumberInput
-                                    label="Number of Candidates"
-                                    value=""
-                                    onUserInput={console.log}
-                                /> */}
                                         {candidatesIdArray.map((id) => (
                                             <ElectionCandidateInput
                                                 key={id}
-                                                candiateId={id}
-                                                nameValue=""
-                                                onUserInput={console.log}
+                                                candidateId={id}
+                                                nameValue={candidatesNamesById[id]}
+                                                onUserInput={(value) =>
+                                                    dispatch({
+                                                        type: ActionTypes.SET_CANDIDATE_NAME,
+                                                        payload: { data: { [id]: value } },
+                                                    })
+                                                }
                                             />
                                         ))}
-                                        <Button type="button">Add Candidate +</Button>
+                                        <Button
+                                            type="button"
+                                            onClick={() =>
+                                                dispatch({
+                                                    type: ActionTypes.SET_NUMBER_OF_CANDIDATES,
+                                                    payload: { data: numberOfCandidates + 1 },
+                                                })
+                                            }
+                                        >
+                                            Add Candidate +
+                                        </Button>
                                     </FormGroupWrapper>
                                 </StyledForm>
                                 <NextButton bgColor="#a3f26f" color="#000" onClick={nextStep}>
@@ -193,14 +225,41 @@ const CreateElection = () => {
                                     <FormHeader>Time and Voter&apos;s data</FormHeader>
                                     <FormGroupWrapper>
                                         <ElectionDuration>
-                                            <span>Voting window: </span>
-                                            <TimeRangePicker onChange={setDuration} value={duration} />
+                                            <span>Start: </span>
+                                            <Datetime
+                                                isValidDate={(current) => {
+                                                    const yesterday = moment().subtract(1, 'day');
+                                                    return current.isAfter(yesterday);
+                                                }}
+                                                value={startTime}
+                                                onChange={(val) => {
+                                                    dispatch({
+                                                        type: ActionTypes.SET_START_TIME,
+                                                        payload: { data: val },
+                                                    });
+                                                }}
+                                            />
+                                            <span>End: </span>
+                                            <Datetime
+                                                isValidDate={(current) => {
+                                                    const yesterday = moment().subtract(1, 'day');
+                                                    return current.isAfter(yesterday);
+                                                }}
+                                                value={endTime}
+                                                onChange={(val) => {
+                                                    dispatch({
+                                                        type: ActionTypes.SET_END_TIME,
+                                                        payload: { data: val },
+                                                    });
+                                                }}
+                                            />
                                         </ElectionDuration>
                                         <FileUpload>
                                             <span>Upload voter&apos;s data: </span>
                                             <Button type="button" onClick={() => openFileSelector()}>
                                                 Select File <FiletypeCsv size={20} />
                                             </Button>
+                                            {votersCsv && <span>{votersCsv.name}</span>}
                                         </FileUpload>
                                     </FormGroupWrapper>
                                     <NextButton bgColor="#a3f26f" color="#000" onClick={nextStep} type="submit">

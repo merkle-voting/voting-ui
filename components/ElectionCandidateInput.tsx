@@ -29,17 +29,17 @@ const Input = styled.input`
 `;
 
 interface IElectionCandidateInput {
-    candiateId: number;
+    candidateId: number;
     nameValue: string;
     onUserInput: (inout: string) => void;
 }
 
-const ElectionCandidateInput: React.FC<IElectionCandidateInput> = ({ candiateId, nameValue, onUserInput }) => {
+const ElectionCandidateInput: React.FC<IElectionCandidateInput> = ({ candidateId, nameValue = '', onUserInput }) => {
     return (
         <CustomizedFlex>
             <CandidateID>
                 <span>Candidate ID: </span>
-                <span>{candiateId}</span>
+                <span>{candidateId}</span>
             </CandidateID>
             <InputWrapper>
                 <Label>Candidate Name</Label>
@@ -51,6 +51,8 @@ const ElectionCandidateInput: React.FC<IElectionCandidateInput> = ({ candiateId,
                     autoComplete="off"
                     autoCorrect="off"
                     spellCheck="false"
+                    value={nameValue}
+                    onChange={(event) => onUserInput(event.target.value)}
                 />
             </InputWrapper>
         </CustomizedFlex>

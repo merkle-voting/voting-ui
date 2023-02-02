@@ -31,6 +31,8 @@ const CreateElectionTextInput: React.FC<ICreateElectionTextInput> = ({ label, on
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck="false"
+                value={value}
+                onChange={(event) => onUserInput(event.target.value)}
             />
         </InputWrapper>
     );

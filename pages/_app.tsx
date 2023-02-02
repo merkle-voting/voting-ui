@@ -1,6 +1,3 @@
-import 'styles/TimeRangePicker.css';
-import 'styles/Clock.css';
-
 import { Sora } from '@next/font/google';
 import { Web3ReactHooks, Web3ReactProvider } from '@web3-react/core';
 import { Connector } from '@web3-react/types';
