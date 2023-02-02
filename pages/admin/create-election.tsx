@@ -4,7 +4,7 @@ import { FiletypeCsv } from '@styled-icons/bootstrap';
 import { useStepper } from 'headless-stepper';
 import moment, { Moment } from 'moment';
 import Head from 'next/head';
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import Datetime from 'react-datetime';
 import styled from 'styled-components';
 import { useFilePicker } from 'use-file-picker';
@@ -69,7 +69,6 @@ const FileUpload = styled.div`
 `;
 
 const CreateElection = () => {
-    const [duration, setDuration] = useState(['12:00', '01:00']);
     const steps = useMemo(() => [{ label: 'Step 1' }, { label: 'Step 2' }], []);
 
     const { state: stepperState, nextStep, prevStep, stepsProps, stepperProps } = useStepper({ steps });
