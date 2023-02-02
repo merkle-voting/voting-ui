@@ -1,0 +1,106 @@
+[
+    { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+    {
+        "anonymous": false,
+        "inputs": [
+            { "indexed": false, "internalType": "uint256[]", "name": "candidates", "type": "uint256[]" },
+            { "indexed": false, "internalType": "string", "name": "title", "type": "string" },
+            { "indexed": false, "internalType": "uint40", "name": "endTime", "type": "uint40" },
+            { "indexed": false, "internalType": "uint256", "name": "id", "type": "uint256" }
+        ],
+        "name": "ElectionCreated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            { "indexed": false, "internalType": "address", "name": "voter", "type": "address" },
+            { "indexed": false, "internalType": "uint256", "name": "electionId", "type": "uint256" },
+            { "indexed": false, "internalType": "uint256", "name": "candidate", "type": "uint256" }
+        ],
+        "name": "Voted",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            { "internalType": "uint256", "name": "_electionId", "type": "uint256" },
+            { "internalType": "bytes32", "name": "_merkleRoot", "type": "bytes32" }
+        ],
+        "name": "activateElection",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            { "internalType": "uint256[]", "name": "_candidates", "type": "uint256[]" },
+            { "internalType": "uint40", "name": "_startTime", "type": "uint40" },
+            { "internalType": "uint40", "name": "_duration", "type": "uint40" },
+            { "internalType": "string", "name": "_title", "type": "string" },
+            { "internalType": "uint8", "name": "_maxCandidates", "type": "uint8" }
+        ],
+        "name": "createElection",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "electionId",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "components": [
+                    { "internalType": "bytes", "name": "signature", "type": "bytes" },
+                    { "internalType": "uint256", "name": "candidateId", "type": "uint256" },
+                    { "internalType": "address", "name": "voter", "type": "address" },
+                    { "internalType": "bytes32", "name": "voterHash", "type": "bytes32" },
+                    { "internalType": "bytes32[]", "name": "proof", "type": "bytes32[]" }
+                ],
+                "internalType": "struct Voting.VoteData[]",
+                "name": "_data",
+                "type": "tuple[]"
+            },
+            { "internalType": "uint256", "name": "_electionId", "type": "uint256" }
+        ],
+        "name": "submitVotes",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [{ "internalType": "uint256", "name": "_id", "type": "uint256" }],
+        "name": "viewElection",
+        "outputs": [
+            {
+                "components": [
+                    { "internalType": "string", "name": "title", "type": "string" },
+                    { "internalType": "uint256[]", "name": "candidates", "type": "uint256[]" },
+                    { "internalType": "uint40", "name": "timeStarted", "type": "uint40" },
+                    { "internalType": "uint40", "name": "duration", "type": "uint40" },
+                    { "internalType": "uint40", "name": "endTime", "type": "uint40" },
+                    { "internalType": "bytes32", "name": "merkleRoot", "type": "bytes32" }
+                ],
+                "internalType": "struct Voting.ElectionM",
+                "name": "e_",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [{ "internalType": "uint256", "name": "_electionId", "type": "uint256" }],
+        "name": "viewResults",
+        "outputs": [
+            { "internalType": "uint256[]", "name": "candidateIds", "type": "uint256[]" },
+            { "internalType": "uint256[]", "name": "_votes", "type": "uint256[]" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
