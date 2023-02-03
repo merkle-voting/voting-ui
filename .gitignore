@@ -36,4 +36,4 @@ yarn-error.log*
 next-env.d.ts
 
 # typechain generated files
-/src/abis/types
+/abis/types
