@@ -15,6 +15,7 @@ import Header from '../../components/Header';
 import AdminLayout from '../../components/layouts/adminLayout';
 import { ContentContainer, PageWrapper } from '../../components/styled/Admin';
 import Button from '../../components/styled/Button';
+import { useVotingContract } from '../../hooks/useContract';
 
 const Stepper = styled.div`
     display: flex;
@@ -151,6 +152,13 @@ const CreateElection = () => {
         });
     }, [ActionTypes.SET_VOTERS_CSV, plainFiles]);
 
+    const votingContract = useVotingContract(true);
+
+    const onSubmit = () => {
+        console.log('submitting...');
+        console.log(state);
+    };
+
     return (
         <>
             <Head>
@@ -261,7 +269,7 @@ const CreateElection = () => {
                                             {votersCsv && <span>{votersCsv.name}</span>}
                                         </FileUpload>
                                     </FormGroupWrapper>
-                                    <NextButton bgColor="#a3f26f" color="#000" onClick={nextStep} type="submit">
+                                    <NextButton bgColor="#a3f26f" color="#000" onClick={onSubmit} type="button">
                                         Submit
                                     </NextButton>
                                 </StyledForm>

@@ -13,6 +13,8 @@
     },
     "dependencies": {
         "@ethersproject/address": "^5.7.0",
+        "@ethersproject/constants": "^5.7.0",
+        "@ethersproject/contracts": "^5.7.0",
         "@ethersproject/properties": "^5.7.0",
         "@ethersproject/providers": "^5.7.2",
         "@metamask/jazzicon": "^2.0.0",

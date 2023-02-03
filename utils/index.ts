@@ -1,4 +1,5 @@
 import { getAddress } from '@ethersproject/address';
+import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
 
 /**
  * Returns true if the passed value is "plain" object, i.e. an object whose
@@ -64,4 +65,14 @@ export function shortenAddress(address: string, chars = 4): string {
         throw Error(`Invalid 'address' parameter '${address}'.`);
     }
     return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`;
+}
+
+// account is not optional
+export function getSigner(provider: JsonRpcProvider, account: string): JsonRpcSigner {
+    return provider.getSigner(account).connectUnchecked();
+}
+
+// account is optional
+export function getProviderOrSigner(provider: JsonRpcProvider, account?: string): JsonRpcProvider | JsonRpcSigner {
+    return account ? getSigner(provider, account) : provider;
 }
