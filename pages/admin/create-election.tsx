@@ -15,7 +15,9 @@ import Header from '../../components/Header';
 import AdminLayout from '../../components/layouts/adminLayout';
 import { ContentContainer, PageWrapper } from '../../components/styled/Admin';
 import Button from '../../components/styled/Button';
+import { SERVER_ROOT_URL } from '../../constants/url';
 import { useVotingContract } from '../../hooks/useContract';
+import { addHours } from '../../utils';
 
 const Stepper = styled.div`
     display: flex;
@@ -69,74 +71,73 @@ const FileUpload = styled.div`
     }
 `;
 
+// REDUCER STUFF
+// ===========================================================================================
+enum ActionTypes {
+    SET_ELECTION_TITLE = 'SET_ELECTION_TITLE',
+    SET_NUMBER_OF_CANDIDATES = 'SET_NUMBER_OF_CANDIDATES',
+    SET_CANDIDATE_NAME = 'SET_CANDIDATE_NAME',
+    SET_VOTERS_CSV = 'SET_VOTERS_CSV',
+    SET_START_TIME = 'SET_START_TIME',
+    SET_END_TIME = 'SET_END_TIME',
+}
+
+interface Action {
+    type: ActionTypes;
+    payload: { data: any };
+}
+interface IState {
+    electionTitle: string;
+    numberOfCandidates: number;
+    candidatesNamesById: { [id: number]: string };
+    votersCsv: File | null | undefined;
+    startTime: Moment | undefined;
+    endTime: Moment | undefined;
+}
+
+const initialState: IState = {
+    electionTitle: '',
+    numberOfCandidates: 2,
+    candidatesNamesById: {},
+    votersCsv: null,
+    startTime: moment(addHours(new Date(), 1)),
+    endTime: moment(addHours(new Date(), 2)),
+};
+
+const reducer = (state: IState, action: Action) => {
+    switch (action.type) {
+        case ActionTypes.SET_ELECTION_TITLE:
+            return { ...state, electionTitle: action.payload.data };
+        case ActionTypes.SET_NUMBER_OF_CANDIDATES:
+            return { ...state, numberOfCandidates: action.payload.data };
+        case ActionTypes.SET_CANDIDATE_NAME:
+            return {
+                ...state,
+                candidatesNamesById: { ...state.candidatesNamesById, ...(action.payload.data as object) },
+            };
+        case ActionTypes.SET_VOTERS_CSV:
+            return { ...state, votersCsv: action.payload.data };
+        case ActionTypes.SET_START_TIME:
+            return { ...state, startTime: action.payload.data };
+        case ActionTypes.SET_END_TIME:
+            return { ...state, endTime: action.payload.data };
+        default:
+            return state;
+    }
+};
+
+// ===========================================================================================
+
 const CreateElection = () => {
+    const [state, dispatch] = useReducer(reducer, initialState);
     const steps = useMemo(() => [{ label: 'Step 1' }, { label: 'Step 2' }], []);
 
     const { state: stepperState, nextStep, prevStep, stepsProps, stepperProps } = useStepper({ steps });
 
-    interface IState {
-        electionTitle: string;
-        numberOfCandidates: number;
-        candidatesNamesById: { [id: number]: string };
-        votersCsv: File | null | undefined;
-        startTime: Moment | undefined;
-        endTime: Moment | undefined;
-    }
-
-    enum ActionTypes {
-        SET_ELECTION_TITLE = 'SET_ELECTION_TITLE',
-        SET_NUMBER_OF_CANDIDATES = 'SET_NUMBER_OF_CANDIDATES',
-        SET_CANDIDATE_NAME = 'SET_CANDIDATE_NAME',
-        SET_VOTERS_CSV = 'SET_VOTERS_CSV',
-        SET_START_TIME = 'SET_START_TIME',
-        SET_END_TIME = 'SET_END_TIME',
-    }
-
-    interface Action {
-        type: ActionTypes;
-        payload: { data: any };
-    }
-
-    const reducer = (state: IState, action: Action) => {
-        switch (action.type) {
-            case ActionTypes.SET_ELECTION_TITLE:
-                return { ...state, electionTitle: action.payload.data };
-            case ActionTypes.SET_NUMBER_OF_CANDIDATES:
-                return { ...state, numberOfCandidates: action.payload.data };
-            case ActionTypes.SET_CANDIDATE_NAME:
-                return {
-                    ...state,
-                    candidatesNamesById: { ...state.candidatesNamesById, ...(action.payload.data as object) },
-                };
-            case ActionTypes.SET_VOTERS_CSV:
-                return { ...state, votersCsv: action.payload.data };
-            case ActionTypes.SET_START_TIME:
-                return { ...state, startTime: action.payload.data };
-            case ActionTypes.SET_END_TIME:
-                return { ...state, endTime: action.payload.data };
-            default:
-                return state;
-        }
-    };
-    function addHours(date: Date, hours: number) {
-        date.setTime(date.getTime() + hours * 60 * 60 * 1000);
-
-        return date;
-    }
-
-    const initialState: IState = {
-        electionTitle: '',
-        numberOfCandidates: 2,
-        candidatesNamesById: {},
-        votersCsv: null,
-        startTime: moment(addHours(new Date(), 1)),
-        endTime: moment(addHours(new Date(), 2)),
-    };
-
-    const [state, dispatch] = useReducer(reducer, initialState);
     const { electionTitle, numberOfCandidates, candidatesNamesById, votersCsv, startTime, endTime } = state;
     const [openFileSelector, { filesContent, loading, errors, clear, plainFiles }] = useFilePicker({
-        accept: ['.xls', '.xlsx', '.xlsm', '.xltx', '.xltm'],
+        // accept: ['.xls', '.xlsx', '.xlsm', '.xltx', '.xltm'],
+        accept: '.csv',
         multiple: false,
     });
 
@@ -150,13 +151,43 @@ const CreateElection = () => {
             type: ActionTypes.SET_VOTERS_CSV,
             payload: { data: plainFiles[0] },
         });
-    }, [ActionTypes.SET_VOTERS_CSV, plainFiles]);
+    }, [plainFiles]);
 
     const votingContract = useVotingContract(true);
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         console.log('submitting...');
         console.log(state);
+        if (!electionTitle || !numberOfCandidates || !candidatesNamesById || !votersCsv || !startTime || !endTime)
+            return;
+        if (!votingContract) return;
+        const canditadates = Object.keys(candidatesNamesById);
+        const maxCandidate = canditadates.length;
+        const timestarted = startTime.unix();
+        const timeEnded = endTime.unix();
+        const duration = timeEnded - timestarted;
+
+        const formData = new FormData();
+        formData.append('name', electionTitle);
+        formData.append('file', votersCsv);
+
+        try {
+            const res = await votingContract.createElection(
+                canditadates,
+                timestarted,
+                duration,
+                electionTitle,
+                maxCandidate
+            );
+            const response = await fetch(`${SERVER_ROOT_URL}/voters/details`, {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await response.json();
+            console.log({ data, res });
+        } catch (error) {
+            console.error('error creating election: ', error);
+        }
     };
 
     return (

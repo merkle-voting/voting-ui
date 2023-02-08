@@ -1,4 +1,5 @@
 import { ArrowRightShort } from '@styled-icons/bootstrap';
+import { Moment } from 'moment';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
@@ -52,15 +53,30 @@ const ActivateButton = styled(Button)`
     padding: 0.3rem 1.5rem;
 `;
 
-const ElectionCard: FC<{ isAdmin?: boolean }> = ({ isAdmin }) => {
+interface IElectionCardData {
+    id: number;
+    title: string;
+    candatesId: number[];
+    startingTime: Moment;
+    endingTime: Moment;
+    durationInseconds: number;
+    // merkleRoot: item.merkleRoot,
+    isActivated: boolean;
+    candidatesVotes: number[];
+}
+
+const ElectionCard: FC<{ data: IElectionCardData; isAdmin?: boolean }> = ({ data, isAdmin }) => {
     const router = useRouter();
+
+    const { id, title, candatesId, startingTime, endingTime, durationInseconds, isActivated, candidatesVotes } = data;
+    const totalVote = candidatesVotes.reduce((total, current) => total + current, 0);
     return (
         <CardWrapper onClick={() => !isAdmin && router.push('/election/1')}>
             <Flex justifyContent="space-between" alignItems="flex-start">
-                <VoteCount>7124 votes</VoteCount>
+                <VoteCount>{`${totalVote} votes`}</VoteCount>
                 <StyledArrow />
             </Flex>
-            <CardTitle>Nigeria general election</CardTitle>
+            <CardTitle>{title}</CardTitle>
             <Flex alignItems="flex-end">
                 {isAdmin ? (
                     <ActivateButton type="button">Activate</ActivateButton>
