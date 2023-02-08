@@ -1,4 +1,5 @@
 import { getAddress } from '@ethersproject/address';
+import { BigNumber } from '@ethersproject/bignumber';
 import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
 
 /**
@@ -76,3 +77,36 @@ export function getSigner(provider: JsonRpcProvider, account: string): JsonRpcSi
 export function getProviderOrSigner(provider: JsonRpcProvider, account?: string): JsonRpcProvider | JsonRpcSigner {
     return account ? getSigner(provider, account) : provider;
 }
+
+export function addHours(date: Date, hours: number) {
+    date.setTime(date.getTime() + hours * 60 * 60 * 1000);
+
+    return date;
+}
+
+export function convertBigNumbers(data: any): any {
+    if (data instanceof BigNumber) {
+        return data.toNumber();
+    } else if (Array.isArray(data)) {
+        return data.map(convertBigNumbers);
+    } else if (typeof data === 'object') {
+        const result: { [key: string]: any } = {};
+        for (const key in data) {
+            result[key] = convertBigNumbers(data[key]);
+        }
+        return result;
+    }
+    return data;
+}
+
+// This is to remove unnecessary properties from the output type. Use it eg. `ExtractPropsFromArray<Inventory.ItemStructOutput>`
+export type ExtractPropsFromArray<T> = Omit<T, keyof Array<unknown> | `${number}`>;
+
+// convertToStruct takes an array type eg. Inventory.ItemStructOutput and converts it to an object type.
+export const convertStructOutputToObject = <A extends Array<unknown>>(arr: A): ExtractPropsFromArray<A> => {
+    const keys = Object.keys(arr).filter((key) => isNaN(Number(key)));
+    const result = {};
+    // @ts-ignore
+    arr.forEach((item, index) => (result[keys[index]] = item));
+    return result as A;
+};
