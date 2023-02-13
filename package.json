@@ -12,10 +12,13 @@
         "postinstall": "yarn typechain"
     },
     "dependencies": {
+        "@ethersproject/abi": "^5.7.0",
         "@ethersproject/address": "^5.7.0",
         "@ethersproject/bignumber": "^5.7.0",
+        "@ethersproject/bytes": "^5.7.0",
         "@ethersproject/constants": "^5.7.0",
         "@ethersproject/contracts": "^5.7.0",
+        "@ethersproject/keccak256": "^5.7.0",
         "@ethersproject/properties": "^5.7.0",
         "@ethersproject/providers": "^5.7.2",
         "@headlessui/react": "^1.7.9",
@@ -28,12 +31,14 @@
         "@web3-react/core": "8.0.35-beta.0",
         "@web3-react/metamask": "8.0.29-beta.0",
         "@web3-react/network": "8.0.27-beta.0",
+        "ethers": "^5.0.0",
         "headless-stepper": "^1.7.0",
         "moment": "^2.29.4",
         "next": "13.1.1",
         "react": "18.2.0",
         "react-datetime": "^3.2.0",
         "react-dom": "18.2.0",
+        "react-hot-toast": "^2.4.0",
         "react-is": "^18.2.0",
         "styled-components": "^5.3.6",
         "use-file-picker": "^1.5.2"

@@ -23,6 +23,16 @@
     },
     {
         "inputs": [
+            { "internalType": "address", "name": "_voter", "type": "address" },
+            { "internalType": "uint256", "name": "_electionId", "type": "uint256" }
+        ],
+        "name": "_voted",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
             { "internalType": "uint256", "name": "_electionId", "type": "uint256" },
             { "internalType": "bytes32", "name": "_merkleRoot", "type": "bytes32" }
         ],
@@ -37,7 +47,8 @@
             { "internalType": "uint40", "name": "_startTime", "type": "uint40" },
             { "internalType": "uint40", "name": "_duration", "type": "uint40" },
             { "internalType": "string", "name": "_title", "type": "string" },
-            { "internalType": "uint8", "name": "_maxCandidates", "type": "uint8" }
+            { "internalType": "uint8", "name": "_maxCandidates", "type": "uint8" },
+            { "internalType": "string[]", "name": "_candidateNames", "type": "string[]" }
         ],
         "name": "createElection",
         "outputs": [],
@@ -83,7 +94,10 @@
                     { "internalType": "uint40", "name": "timeStarted", "type": "uint40" },
                     { "internalType": "uint40", "name": "duration", "type": "uint40" },
                     { "internalType": "uint40", "name": "endTime", "type": "uint40" },
-                    { "internalType": "bytes32", "name": "merkleRoot", "type": "bytes32" }
+                    { "internalType": "bytes32", "name": "merkleRoot", "type": "bytes32" },
+                    { "internalType": "bool", "name": "active", "type": "bool" },
+                    { "internalType": "uint256", "name": "totalVotes", "type": "uint256" },
+                    { "internalType": "string[]", "name": "candidateNames", "type": "string[]" }
                 ],
                 "internalType": "struct Voting.ElectionM",
                 "name": "e_",

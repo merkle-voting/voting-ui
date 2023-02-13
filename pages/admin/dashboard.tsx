@@ -20,7 +20,7 @@ const ContentContainer = styled(Container)`
 
 const Dashboard = () => {
     const [elections, setElections] = useState<any[] | undefined>(undefined);
-    const getElections = useGetElections();
+    const { getElections } = useGetElections();
 
     useEffect(() => {
         (async () => {

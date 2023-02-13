@@ -4,6 +4,7 @@ import { Connector } from '@web3-react/types';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { Fragment } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { createGlobalStyle, DefaultTheme, ThemeProvider } from 'styled-components';
 
 import { web3Injected, web3network, web3NetworkHooks, webInjectedHooks } from '../connection';
@@ -106,6 +107,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                     <Layout>
                         <Component {...pageProps} />
                     </Layout>
+                    <Toaster />
                 </div>
             </ThemeProvider>
         </Web3ReactProvider>

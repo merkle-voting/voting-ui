@@ -110,3 +110,27 @@ export const convertStructOutputToObject = <A extends Array<unknown>>(arr: A): E
     arr.forEach((item, index) => (result[keys[index]] = item));
     return result as A;
 };
+
+export function getcurrentTimestampInSeconds() {
+    return Math.floor(Date.now() / 1000);
+}
+
+export function getDuration(durationInSeconds: number) {
+    const hours = Math.floor(durationInSeconds / 3600);
+    const minutes = Math.floor((durationInSeconds % 3600) / 60);
+    const seconds = Math.floor(durationInSeconds % 60);
+
+    return {
+        hours,
+        minutes,
+        seconds,
+    };
+}
+
+/**
+ * Returns the gas value plus a margin for unexpected or variable gas costs
+ * @param value the gas value to pad
+ */
+export function calculateGasMargin(value: BigNumber): BigNumber {
+    return value.mul(120).div(100);
+}

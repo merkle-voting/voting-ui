@@ -1,10 +1,17 @@
 import { ArrowRightShort } from '@styled-icons/bootstrap';
-import { Moment } from 'moment';
+import moment from 'moment';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { FC } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import styled from 'styled-components';
 
+import { SERVER_ROOT_URL } from '../constants/url';
+import { useVotingContract } from '../hooks/useContract';
+import { useCountdown } from '../hooks/useCountdown';
+import { useIsAdmin } from '../hooks/useIsAdmin';
+import { IElection } from '../types';
+import { calculateGasMargin } from '../utils';
 import Button from './styled/Button';
 import Flex from './styled/Flex';
 
@@ -53,38 +60,120 @@ const ActivateButton = styled(Button)`
     padding: 0.3rem 1.5rem;
 `;
 
-interface IElectionCardData {
-    id: number;
-    title: string;
-    candatesId: number[];
-    startingTime: Moment;
-    endingTime: Moment;
-    durationInseconds: number;
-    // merkleRoot: item.merkleRoot,
-    isActivated: boolean;
-    candidatesVotes: number[];
-}
-
-const ElectionCard: FC<{ data: IElectionCardData; isAdmin?: boolean }> = ({ data, isAdmin }) => {
+const ElectionCard: FC<{ data: IElection; isAdmin?: boolean }> = ({ data, isAdmin }) => {
     const router = useRouter();
+    const isAdminFromHook = useIsAdmin();
 
     const { id, title, candatesId, startingTime, endingTime, durationInseconds, isActivated, candidatesVotes } = data;
     const totalVote = candidatesVotes.reduce((total, current) => total + current, 0);
+    const votingContract = useVotingContract(true);
+
+    const [merkleRoot, setMerkleRoot] = useState<string | null>(null);
+
+    const getMerkleRoot = useCallback(async () => {
+        try {
+            const rootResponse = await fetch(`${SERVER_ROOT_URL}/root/${id}`);
+            const rootData = await rootResponse.json();
+            if (!rootData.success) {
+                return console.error(rootData.message);
+            }
+            setMerkleRoot(rootData.root);
+        } catch (error) {
+            console.error('error getting root: ', error);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        getMerkleRoot();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const activate = useCallback(async () => {
+        try {
+            if (id === undefined || !merkleRoot)
+                throw new Error('no merkle root found. Please wait while it is being fetched!');
+            if (!votingContract) throw new Error('Voting contract not gotten!');
+            if (!isAdminFromHook) throw new Error("You are not the admin, you should'nt be here!");
+
+            const estimatedGas = await votingContract.estimateGas.activateElection(id, merkleRoot);
+
+            const activateElectionTransaction = await votingContract.activateElection(id, merkleRoot, {
+                gasLimit: calculateGasMargin(estimatedGas),
+            });
+            await activateElectionTransaction.wait();
+
+            toast(`Election with ID: ${id} succcessfuly activated`, {
+                duration: 4000,
+                position: 'top-center',
+                style: { backgroundColor: '#a3f26f' },
+                icon: '👏',
+                iconTheme: {
+                    primary: '#000',
+                    secondary: '#fff',
+                },
+                ariaProps: {
+                    role: 'status',
+                    'aria-live': 'polite',
+                },
+            });
+
+            router.reload();
+        } catch (error: any) {
+            toast(
+                `An Error occured: ${
+                    error.message ? String(error.message).substring(0, 150) : 'please check the console'
+                }`,
+                {
+                    duration: 4000,
+                    position: 'top-center',
+                    style: { backgroundColor: '#f19c9c' },
+                    icon: '❌',
+                    iconTheme: {
+                        primary: '#000',
+                        secondary: '#fff',
+                    },
+                    ariaProps: {
+                        role: 'status',
+                        'aria-live': 'polite',
+                    },
+                }
+            );
+            console.error('error activating election: ', error);
+        }
+    }, [id, isAdminFromHook, merkleRoot, router, votingContract]);
+
+    const [days, hours, minutes, seconds] = useCountdown(moment(endingTime).valueOf());
+
+    const timeElapsed = days + hours + minutes + seconds <= 0;
+
+    const notYetStarted = new Date().getTime() < startingTime.valueOf();
+
     return (
-        <CardWrapper onClick={() => !isAdmin && router.push('/election/1')}>
+        <CardWrapper onClick={() => isActivated && router.push(`/election/${id}`)}>
             <Flex justifyContent="space-between" alignItems="flex-start">
                 <VoteCount>{`${totalVote} votes`}</VoteCount>
-                <StyledArrow />
+                {isActivated && <StyledArrow />}
             </Flex>
             <CardTitle>{title}</CardTitle>
             <Flex alignItems="flex-end">
-                {isAdmin ? (
-                    <ActivateButton type="button">Activate</ActivateButton>
+                {!timeElapsed ? (
+                    isAdmin && !isActivated ? (
+                        <ActivateButton type="button" onClick={activate}>
+                            Activate
+                        </ActivateButton>
+                    ) : notYetStarted ? (
+                        <Flex width="100%" margin="1rem 0 0 0">
+                            <CountDown>Starts by: {startingTime.format('YYYY-MM-DD HH:mm')}</CountDown>
+                        </Flex>
+                    ) : (
+                        <Flex width="100%" justifyContent="space-between" margin="1rem 0 0 0">
+                            {/* <DynamicVoter /> */}
+                            <CountDown>Voting currently ongoing</CountDown>
+                            <CountDown>Ends in {`${hours}:${minutes}:${seconds}`}</CountDown>
+                        </Flex>
+                    )
                 ) : (
-                    <>
-                        <DynamicVoter />
-                        <CountDown>Ends in 00:02:32</CountDown>
-                    </>
+                    <CountDown>Ended</CountDown>
                 )}
             </Flex>
         </CardWrapper>

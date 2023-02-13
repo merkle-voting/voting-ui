@@ -2,8 +2,8 @@ import { initializeConnector } from '@web3-react/core';
 import { MetaMask } from '@web3-react/metamask';
 import { Network } from '@web3-react/network';
 
-import { SUPPORTED_CHAIN_ID } from '../constant/network';
-import { RPC_PROVIDERS_MAP } from '../constant/provider';
+import { SUPPORTED_CHAIN_ID } from '../constants/network';
+import { RPC_PROVIDERS_MAP } from '../constants/provider';
 
 function onError(error: Error) {
     console.debug(`web3-react error: ${error}`);

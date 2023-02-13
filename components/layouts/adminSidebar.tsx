@@ -85,12 +85,6 @@ const AdminSidebar = () => {
                         <span>Create Election</span>
                     </StyledLink>
                 </li>
-                {/* <li>
-                    <StyledLink href="/admin/result" onClick={newPathName} pathname={pathName}>
-                        <LineChart title="election result" />
-                        <span>Election Results</span>
-                    </StyledLink>
-                </li> */}
             </ul>
         </SideNav>
     );

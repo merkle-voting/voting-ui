@@ -3,7 +3,7 @@ import React from 'react';
 
 import { web3Injected } from '../../connection';
 import { setMetamaskIsConnected } from '../../connection/utils';
-import { addAvalancheFujiTestnet } from '../../constant/network';
+import { addAvalancheFujiTestnet } from '../../constants/network';
 import Connected from './connected';
 import Disconnected from './disconneted';
 

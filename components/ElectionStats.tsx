@@ -1,6 +1,8 @@
 import ProgressBar from '@ramonak/react-progress-bar';
+import { Moment } from 'moment';
 import styled, { useTheme } from 'styled-components';
 
+import { useCountdown } from '../hooks/useCountdown';
 import Container from './styled/Container';
 const StatsContainer = styled(Container)`
     height: 8rem;
@@ -38,32 +40,53 @@ const Stat = styled.div`
     }
 `;
 
-const ElectionStats = () => {
+const StartTime = styled.div`
+    font-size: 1rem;
+    color: ${(props) => props.theme.colors.green};
+`;
+
+const ElectionStats: React.FC<{
+    title: string;
+    total_candidate: number | string;
+    total_voters: number | string;
+    percentage_completed: number;
+    starting_time: Moment;
+    ending_time: Moment;
+}> = ({ title, total_candidate, total_voters, starting_time, ending_time, percentage_completed }) => {
     const { colors } = useTheme();
+
+    const [days, hours, minutes, seconds] = useCountdown(ending_time.valueOf());
+
+    const timeElapsed = days + hours + minutes + seconds <= 0;
+
+    const notYetStarted = new Date().getTime() < starting_time.valueOf();
     return (
         <StatsContainer>
-            <Title>Nigerian 2023 general election</Title>
+            <Title>{title}</Title>
             <StatsWrapper>
                 <Stat>
                     <span>status</span>
-                    <ProgressBar
-                        completed={60}
-                        customLabel="In Progress 60%"
-                        bgColor={colors.green}
-                        margin="5px 0 0 0"
-                    />
+                    {notYetStarted ? (
+                        <StartTime>Starts by: {starting_time.format('YYYY-MM-DD HH:mm')}</StartTime>
+                    ) : (
+                        <ProgressBar
+                            completed={Math.ceil(percentage_completed)}
+                            bgColor={colors.green}
+                            margin="5px 0 0 0"
+                        />
+                    )}
                 </Stat>
                 <Stat>
                     <span>Total Candidate</span>
-                    <span>5</span>
+                    <span>{total_candidate}</span>
                 </Stat>
                 <Stat>
                     <span>Total Voters</span>
-                    <span>200,000</span>
+                    <span>{total_voters}</span>
                 </Stat>
                 <Stat>
                     <span>Time Remaining</span>
-                    <span>02:03:43</span>
+                    <span>{!timeElapsed ? `${hours}:${minutes}:${seconds}` : 'ended'}</span>
                 </Stat>
             </StatsWrapper>
         </StatsContainer>

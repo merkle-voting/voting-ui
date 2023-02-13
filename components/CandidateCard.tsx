@@ -57,6 +57,10 @@ const VoteBtn = styled(Button)`
     color: ${(props) => props.theme.colors.white};
     background-color: ${(props) => props.theme.colors.green};
     border-radius: 1rem;
+    &:disabled {
+        pointer-events: none;
+        background-color: #ccc;
+    }
 `;
 
 const CandiateImage = styled.div`
@@ -71,22 +75,34 @@ const CandiateImage = styled.div`
 
 // const Party = styled.span``;
 
-const CandidateCard = () => {
+const CandidateCard: React.FC<{
+    candidate_name: string;
+    candidate_id: number;
+    cadidate_vote: number;
+    user_can_vote: boolean;
+    onVoteClick: (id: number) => void;
+    percentage_completed: number;
+    voted: boolean;
+}> = ({ cadidate_vote, candidate_id, candidate_name, user_can_vote, onVoteClick, percentage_completed, voted }) => {
     return (
         <CardWrapper>
             <Flex justifyContent="space-between">
                 <Details>
-                    <span>Peter Obi</span>
-                    <span>Presidential Aspirant</span>
-                    <span>Labour Party</span>
+                    <span>{candidate_name}</span>
+                    <span>Candiate {candidate_id}</span>
                 </Details>
                 <CandiateImage />
             </Flex>
             <Flex justifyContent="space-between" margin="1.5rem 0">
                 <VoteCount>
-                    <StyledCaretUp /> 5,000 votes
+                    <StyledCaretUp /> {cadidate_vote} votes
                 </VoteCount>
-                <VoteBtn>Vote</VoteBtn>
+                <VoteBtn
+                    disabled={voted || !user_can_vote || percentage_completed === 100}
+                    onClick={() => onVoteClick(candidate_id)}
+                >
+                    Vote
+                </VoteBtn>
             </Flex>
         </CardWrapper>
     );
